@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name DOGS
+// @name DOGS Secure
 // @namespace https://www.bondageprojects.com/
 // @version 1.0.2
 // @description Devious Obligate Great Stuff
-// @author Zoi
+// @author Zoi ft. Lyx-n
 // @match https://bondageprojects.elementfx.com/*
 // @match https://www.bondageprojects.elementfx.com/*
 // @match https://bondage-europe.com/*
@@ -14,6 +14,6 @@
 // @grant none
 // ==/UserScript==
 
-(function(){let n=document.createElement("script");n.setAttribute("language","JavaScript");n.setAttribute("crossorigin","anonymous");n.setAttribute("src","https://furryzoi.github.io/Devious-Obligate-Great-Stuff/bundle.js");n.onload=()=>n.remove();document.head.appendChild(n);})();
+(function(){let n=document.createElement("script");n.setAttribute("language","JavaScript");n.setAttribute("crossorigin","anonymous");n.setAttribute("src","https://lyx-n.github.io/DOGS-Secure/bundle.js");n.onload=()=>n.remove();document.head.appendChild(n);})();
 
 
