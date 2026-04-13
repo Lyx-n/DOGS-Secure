@@ -29517,13 +29517,7 @@ Was the mod loaded multiple times?`), u3(a3));
 One of mods you are using is using an old version of SDK. It will work for now but please inform author to update`), window.bcModSdk);
       return "undefined" != typeof exports && (Object.defineProperty(exports, "__esModule", { value: true }), exports.default = y3), y3;
     })();
-    var workAround = bcModSdk.registerMod({
-      name: "DOGS-Helper",
-      fullName: "Dogs storage anti-cheat",
-      version: "0.0.1a",
-      repository: ""
-    });
-    workAround.hookFunction("ServerPlayerExtensionSettingsSync", 10, (args, next) => {
+    l3("ServerPlayerExtensionSettingsSync", 10, (args, next) => {
       if (args[0] != "DOGS") {
         return next(args);
       }
