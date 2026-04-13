@@ -30,7 +30,7 @@ export function chatSendChangelog(): void {
 waitForStart(() => {
     registerCore({
         name: "DOGS",
-        fullName: "Devious Obligate Great Stuff",
+        fullName: "Devious Obligate Great Stuff Secure",
         key: "DOGS",
         version: getModVersion(),
         repository: GITHUB_REPO_URL,

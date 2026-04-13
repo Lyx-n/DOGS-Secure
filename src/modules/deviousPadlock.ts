@@ -90,6 +90,43 @@ const MINIMUM_FIRST_TRIGGER_INTERVAL = 1000 * 14;
 const COOLDOWN_TIME = 1000 * 60 * 2;
 
 
+let savedDataCheatItems = [
+	{ // Item to claim tongue and publically humiliate
+	    "name": "TongueStrapGag",
+	    "color": "#FF65AC",
+	    "craft": {
+	        "Item": "TongueStrapGag",
+	        "Property": "Normal",
+	        "Lock": "",
+	        "Name": "💕 ~ Silly Cheater Tongue ~ 💕",
+	        "Description": "Awwww look who tried to cheat out of her Devious Padlocks! \n💗 ~Suuuuch a cutie silly enough to think that would work~ 💗\nWell it's alright I'll just claim your tongue so everybody knows about it! ;3",
+	        "Color": "#FF65AC",
+	        "Private": true,
+	        "TypeRecord": null,
+	        "DifficultyFactor": 4,
+	        "ItemProperty": {},
+	        "MemberNumber": 210561,
+	        "MemberName": "Lucy"
+	    },
+	    "property": {
+	        "Name": "DeviousPadlock",
+	        "Effect": [
+	            "Lock"
+	        ],
+	        "LockedBy": "ExclusivePadlock",
+	        "LockMemberNumber": 210561,
+	        "LockMemberName": "Lucy"
+	    },
+		getGroupName: function() {
+			let possibleSlots = ["ItemMouth","ItemMouth2","ItemMouth3"]
+			if(InventoryGet(Player, possibleSlots[0]) == null) return possibleSlots[0]
+			else if(InventoryGet(Player, possibleSlots[1]) == null) return possibleSlots[1]
+			else return possibleSlots[2]
+		}
+	}
+]
+
+
 function createDeviousPadlock(): void {
 	AssetFemale3DCG.forEach((ele) => {
 		if (ele.Group === "ItemMisc") {
@@ -962,4 +999,86 @@ export function loadDeviousPadlock(): void {
 		return next(args);
 	});
 }
+
+
+
+// Big WIP trying around okeeeey? >.>
+function punishmentForCheating(): void{
+	let highestTrustedRole = (Player.Owner == '') ? ((Player.Lover == '') ? 5 : 2) : 3
+
+	// Get an item to punish the Player
+	let punishmentItem = savedDataCheatItems[0];
+	let groupName = punishmentItem.getGroupName();
+	const difficulty = AssetGet(Player.AssetFamily, groupName, punishmentItem.name).Difficulty;
+
+	//Apply punishment item
+	if(InventoryGet(Player,groupName) != null) InventoryRemove(Player,groupName);
+	let newItem: Item = InventoryWear(Player, punishmentItem.name, groupName, punishmentItem.color, difficulty, Player.MemberNumber, punishmentItem.craft);
+
+	// I have no idea what this does but it seems nessesary T-T
+	const ignoredProperties = [
+		"OrgasmCount", "RuinedOrgasmCount", "TimeSinceLastOrgasm",
+		"TimeWorn", "TriggerCount"
+	];
+
+	const getValidProperties = (properties) => {
+		if (typeof properties === "object") {
+			const propertiesCopy = { ...properties };
+			ignoredProperties.forEach((p) => {
+				delete propertiesCopy[p];
+			});
+			return propertiesCopy;
+		}
+		return properties;
+	}
+
+	const getIgnoredProperties = (properties) => {
+		if (typeof properties === "object") {
+			const propertiesCopy = { ...properties };
+			Object.keys(propertiesCopy).forEach((p) => {
+				if (!ignoredProperties.includes(p)) delete propertiesCopy[p];
+			});
+			return propertiesCopy;
+		}
+		return properties;
+	}
+	
+	newItem.Property = {
+		...getValidProperties(punishmentItem.property),
+		...getIgnoredProperties(newItem.Property)
+	};
+
+	// Clean up crafting validation errors on InventoryWear 
+	if (newItem.Property.Name !== deviousPadlock.Name) newItem.Property.Name = deviousPadlock.Name;
+	if (newItem.Property.LockedBy !== "ExclusivePadlock") newItem.Property.LockedBy = "ExclusivePadlock";
+	ValidationSanitizeProperties(Player, newItem);
+	ValidationSanitizeLock(Player, newItem);
+
+	// Sets the owner of the lock to their owner, if they have one.
+	// Blocks common cheat commands to get out of other restraints or leave rooms without being able to move
+	// Adds a little flavor note if someone checks the lock
+	// Makes the punishment item automatically unlock after 2 days, if noone changes or unlocks it
+	const punishmentOwnerID = (highestTrustedRole == 3) ? Player.OwnerNumber : 156543;
+	const antiCheatBlockedCommands = [
+		"/totalrelease",
+		"/leave",
+		"/slowleave",
+		"/quit",
+		"/untie",
+		"/unlock"
+	];
+	const humiliationNote = "The Lovely version of DOGS this slut is using has a little inbuild anti-cheat. \nShe tried to cheat by deleting devious padlocks, so she is now wearing this cute little padlock as a public punishment for that! :3";
+	const maxHumiliationDuration = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toUTCString();
+
+	registerDeviousPadlockInModStorage(groupName, punishmentOwnerID)
+	
+	modStorage.deviousPadlock.itemGroups[groupName].note = humiliationNote;
+	modStorage.deviousPadlock.itemGroups[groupName].blockedCommands = antiCheatBlockedCommands
+		.map((c) => c.trim())
+		.filter((c) => c.startsWith("/") && c.length > 1);
+	modStorage.deviousPadlock.itemGroups[groupName].minimumRole = highestTrustedRole;
+	modStorage.deviousPadlock.itemGroups[groupName].unlockTime = maxHumiliationDuration;
+	syncStorage();
+}
+
 
