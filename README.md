@@ -1,12 +1,9 @@
-# DOGS (Devious Obligate Great Stuff)
-Adds devious stuff in Bondage Club
+# DOGS-Secure
+Fork of DOGS that just adds a couple of extra features
 ### Features:
-- Devious Padlock - Extremal Padlock which can't be removed by cheats
-- Remote Control - Upgraded version of Universal Remote that give you more possibilities
+- Protection from editing the ModStorage to remove DOGS lock on next relog
 ## Installation
-### FUSAM (Recommended)
-https://sidiousious.gitlab.io/bc-addon-loader
-### Tampermonkey
-https://github.com/FurryZoi/Devious-Obligate-Great-Stuff/raw/main/dogs.user.js
+### Tampermonkey/ViolentMonkey
+https://github.com/Lyx-n/DOGS-Secure/raw/main/dogs.user.js
 ### Bookmark
-https://github.com/FurryZoi/Devious-Obligate-Great-Stuff/raw/main/dogs.bookmark.js
+https://github.com/Lyx-n/DOGS-Secure/raw/main/dogs.bookmark.js
