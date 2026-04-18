@@ -453,7 +453,6 @@ function checkDeviousPadlocks(target: Character): void {
 		for (const group in modStorage.deviousPadlock.itemGroups ?? {}) {
 			const groupName = group as AssetGroupItemName;
 			const currentItem = InventoryGet(Player, groupName);
-			if (!currentItem) continue;
 			const savedItem = modStorage.deviousPadlock.itemGroups[groupName]!.item;
 			const owner = modStorage.deviousPadlock.itemGroups[groupName]!.owner;
 			const basePadlock = modStorage.deviousPadlock.itemGroups[groupName]!.baseLock ?? BasePadlock.EXCLUSIVE;
@@ -500,12 +499,15 @@ function checkDeviousPadlocks(target: Character): void {
 						delete modStorage.deviousPadlock.itemGroups[groupName];
 						unsyncItemGroups([groupName], false);
 					} else {
-						modStorage.deviousPadlock.itemGroups[groupName]!.item = getSavedItemData(currentItem);
+						modStorage.deviousPadlock.itemGroups[groupName]!.item = getSavedItemData(currentItem!);
 					}
 					syncStorage();
 				} else if (!deviousPadlockTriggerCooldown.state) {
-					const savedAsset = AssetGet(Player.AssetFamily, groupName, savedItem.name)
-					if (!savedAsset) continue;
+					const savedAsset = AssetGet(Player.AssetFamily, groupName, savedItem.name);
+					if (!savedAsset) {
+						console.warn("DOGS", "Invalid asset: " + savedItem.name);
+						continue;
+					};
 
 					const difficulty = savedAsset.Difficulty;
 					let newItem = InventoryWear(Player, savedItem.name, groupName, savedItem.color, difficulty, Player.MemberNumber, savedItem.craft);
@@ -814,12 +816,13 @@ export function loadDeviousPadlock(): void {
 		const [target, item] = args;
 		const itemGroupName = item.Asset?.Group?.Name as AssetGroupItemName;
 		if (item?.Property?.Name === deviousPadlock.Name && (target.IsPlayer() || target.DOGS)) {
-			if (target.IsPlayer() &&
+			if (
+				target.IsPlayer() &&
 				!modStorage.deviousPadlock.itemGroups?.[itemGroupName]
 			) {
 				registerDeviousPadlockInModStorage(itemGroupName, Number(item.Property.LockMemberNumber ?? Player.MemberNumber));
 			}
-			return hasKeyToPadlock(target.FocusGroup!.Name, Player, target);
+			return hasKeyToPadlock(item.Asset.Group.Name as AssetGroupItemName, Player, target);
 		}
 		return next(args);
 	});
